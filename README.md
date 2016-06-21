@@ -20,6 +20,6 @@ Other option is to define at Operating System level as shown below:
 
 
 #### To test the web application:
-- First generate the .war file on eclipse
+- First, import this project on eclipse IDE and generate a .war file
 - Second, install it on application server
 - Test and voilà
