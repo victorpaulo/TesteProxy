@@ -1,3 +1,7 @@
+<%@page import="java.io.InputStreamReader"%>
+<%@page import="java.io.BufferedReader"%>
+<%@page import="java.net.URLConnection"%>
+<%@page import="java.net.URL"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -22,13 +26,35 @@
   	httpsProxyHost = "N/A";
   } 
   
+  if (httpProxyHost == null || "".equals(httpProxyHost)) {
+  	httpProxyHost = "N/A";
+  }
+   
+  if (httpsProxyPort == null || "".equals(httpsProxyPort)) {
+  	httpsProxyPort = "N/A";
+  }
+   
   if (httpProxyPort == null || "".equals(httpProxyPort)) {
   	httpProxyPort = "N/A";
   } 
   
-   if (urlAddress == null || "".equals(urlAddress)) {
-   	urlAddress = "http://www.google.com.br";
-  } 
+  String saida = "";
+  if (urlAddress != null || !"".equals(urlAddress)) {
+      try {
+		  URL oracle = new URL(urlAddress);
+		  URLConnection yc = oracle.openConnection();
+		  BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+		  String inputLine;
+		  StringBuffer sb = new StringBuffer();
+		  while ((inputLine = in.readLine()) != null) 
+		      sb.append(inputLine);
+		  in.close();
+		  
+		  saida = sb.toString();
+	  } catch (Exception ex) {
+	      saida = ex.getMessage();
+	  }
+   }
 %>
 
 JVM HTTPs Proxy host = <%=httpsProxyHost %> <br/>
@@ -36,14 +62,17 @@ JVM HTTPs Proxy port = <%=httpsProxyPort %> <br/><br/>
 JVM HTTP Proxy host = <%=httpProxyHost %> <br/>
 JVM HTTP Proxy port = <%=httpProxyPort %>
 <br/>
-Iframe chamando o endereço http(s):<br>
+<br/>
+Chamando o endereço http(s):<br>
 <form method="POST" action="index.jsp">
-  <input type="text" name="endereco" size="50"/>
+  <input type="text" name="endereco" value="" size="50"/>
   <br>
   <input type="submit" name="testar"/>
+  
+  <textarea rows="10" cols="60" name="comment">
+    <%=saida%>
+  </textarea>
 </form>
-<iframe src="<%=urlAddress %>" style="position: absolute; width: 100%; height: 100%; border: none">
-  <p>Your browser does not support iframes.</p>
-</iframe>
+
 </body>
 </html>
